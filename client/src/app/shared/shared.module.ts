@@ -18,6 +18,7 @@ import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { PhotoWidgetComponent } from './components/photo-widget/photo-widget.component';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { SelectDropdownComponent } from './components/select-dropdown/select-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     StepperComponent,
     BasketSummaryComponent,
     PhotoWidgetComponent,
+    SelectDropdownComponent,
   ],
 
   imports: [
@@ -64,7 +66,8 @@ import { ImageCropperModule } from 'ngx-image-cropper';
     TabsModule,
     NgxDropzoneModule,
     ImageCropperModule,
-    PhotoWidgetComponent
+    PhotoWidgetComponent,
+    SelectDropdownComponent
   ]
 })
 export class SharedModule {}

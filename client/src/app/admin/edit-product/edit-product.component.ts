@@ -1,6 +1,5 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ShopService } from './../../shop/shop.service';
-import { AdminService } from './../admin.service';
 import { IType } from './../../shared/models/productType';
 import { IBrand } from './../../shared/models/brand';
 import { IProduct, ProductFormValues } from './../../shared/models/product';
@@ -18,10 +17,8 @@ export class EditProductComponent implements OnInit {
   brands: IBrand[];
   types: IType[];
 
-  constructor(private adminService: AdminService,
-    private shopeService: ShopService,
-    private route: ActivatedRoute,
-    private router: Router) {
+  constructor(private shopeService: ShopService,
+    private route: ActivatedRoute) {
     this.productFormValues = new ProductFormValues();
     }
 

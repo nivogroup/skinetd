@@ -1,3 +1,4 @@
+import { FormGroup, FormControl, Validators, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
 import { AdminService } from './../admin.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IType } from './../../shared/models/productType';
@@ -11,24 +12,61 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./edit-product-form.component.scss'],
 })
 export class EditProductFormComponent implements OnInit {
+  editProductForm: FormGroup;
   @Input() product: ProductFormValues;
   @Input() brands: IBrand;
   @Input() types: IType;
 
-  constructor(private route: ActivatedRoute, private adminService: AdminService, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private adminService: AdminService,
+    private router: Router
+  ) {}
 
-  ngOnInit(): void {}
-
-  updatePrice(event: any) {
-    this.product.price = event;
+  ngOnInit(): void {
+    this.createEditProductForm();
+    this.editProductForm.patchValue(this.product);
   }
 
-  onSubmit(product: ProductFormValues) {
+  createEditProductForm() {
+    this.editProductForm = new FormGroup({
+      name: new FormControl('', Validators.required),
+      price: new FormControl(0, [
+        Validators.required,
+        Validators.min(0.01),
+        this.regexValidator(
+          new RegExp(
+            '\\$?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(\\.[0-9][0-9])?$'
+          ),
+          { noDecimal: true }
+        ),
+      ]),
+      description: new FormControl(null, Validators.required),
+      productBrandId: new FormControl(null, Validators.required),
+      productTypeId: new FormControl(null, Validators.required)
+    });
+  }
+
+  regexValidator(regex: RegExp, error: ValidationErrors): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: string } => {
+      if (!control.value) {
+        return null;
+      }
+      const valid = regex.test(control.value);
+      return valid ? null : error;
+    };
+  }
+
+ /*  updatePrice(event: any) {
+    this.product.price = event;
+  } */
+
+  onSubmit() {
     if (this.route.snapshot.url[0].path === 'edit') {
       const updatedProduct = {
         ...this.product,
-        ...product,
-        price: +product.price,
+        ...this.editProductForm.value,
+        price: +this.editProductForm.get('price').value,
       };
       this.adminService
         .updateProduct(updatedProduct, +this.route.snapshot.paramMap.get('id'))
@@ -41,7 +79,10 @@ export class EditProductFormComponent implements OnInit {
           }
         );
     } else {
-      const newProduct = { ...product, price: +product.price };
+      const newProduct = {
+        ...this.editProductForm.value,
+        price: +this.editProductForm.get('price').value,
+      };
       this.adminService.createProduct(newProduct).subscribe(
         (response: any) => {
           this.router.navigate(['/admin']);
